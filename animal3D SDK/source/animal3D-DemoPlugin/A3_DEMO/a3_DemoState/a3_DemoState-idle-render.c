@@ -200,7 +200,7 @@ void a3demo_renderTest(a3_DemoState const* demoState, a3f64 const dt)
 	// set viewport
 	glViewport(-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 
-	// ****TO-DO: render scene here
+	// ****DONE: render scene here
 	//	-> implement "render" from tutorial
 	const float color[] = {
 		cosf((float)demoState->dt_timer_tot) * 0.5f + 0.5f,
