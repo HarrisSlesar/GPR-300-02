@@ -35,12 +35,19 @@
 //	-> implement for multiple lights
 //		(hint: there is another uniform for light count)
 
+
 layout (location = 0) out vec4 rtFragColor;
 
 in vec4 vPosition;
 in vec4 vNormal;
+in vec2 vTexcoord;
 
 uniform vec4 uLightPos; // world/camera space
+uniform vec4 uLightCol;
+uniform vec4 uColor;
+uniform sampler2D uAtlas;
+uniform int uCount;
+
 
 void main()
 {
@@ -53,8 +60,11 @@ void main()
 	vec4 N = normalize(vNormal);
 	vec4 L = normalize(uLightPos - vPosition);
 	float kd = dot(N,L);
+	vec4 pixelColor = texture2D(uAtlas, vTexcoord);
+	vec4 materialColor = pixelColor * uColor;
 
+	rtFragColor = kd * uLightCol * materialColor;
 
 	// DEBUGGING
-	rtFragColor = vec4(kd,kd,kd,1.0);
+	//rtFragColor = vec4(kd,kd,kd,1.0);
 }

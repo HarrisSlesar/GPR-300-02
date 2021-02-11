@@ -21,4 +21,3 @@
 	utilCommon_fs4x.glsl
 	Common utilities for fragment shaders.
 */
-

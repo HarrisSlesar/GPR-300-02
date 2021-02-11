@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare matrices
 //		(hint: not MVP this time, made up of multiple; see render code)
 //	-> transform input position correctly, assign to output
@@ -38,6 +38,7 @@
 
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec3 aNormal;
+layout (location = 8) in vec2 aTexcoord;
 
 uniform mat4 uMV, uP, uMV_nrm;
 
@@ -46,6 +47,10 @@ flat out int vInstanceID;
 
 out vec4 vPosition;
 out vec4 vNormal;
+out vec2 vTexcoord;
+
+
+
 
 void main()
 {
@@ -59,6 +64,8 @@ void main()
 	vNormal = uMV_nrm * vec4(aNormal, 0.0); // camera-space
 
 	gl_Position = uP * vPosition; // clip-space
+
+	vTexcoord = aTexcoord;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

@@ -459,8 +459,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_instanced_vs4x.glsl" } } },
 			// 00-common
-			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTexcoord_transform_vs4x.glsl" } } },// ****DECODE
-			{ { { 0 },	"shdr-vs:pass-tb-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTangentBasis_transform_vs4x.glsl" } } },// ****DECODE
+			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/passTexcoord_transform_vs4x.glsl" } } },// ****DECODE
+			{ { { 0 },	"shdr-vs:pass-tb-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/passTangentBasis_transform_vs4x.glsl" } } },// ****DECODE
 			{ { { 0 },	"shdr-vs:pass-tex-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTexcoord_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTangentBasis_transform_instanced_vs4x.glsl" } } },
 
@@ -474,11 +474,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-col-unif",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorUnif_fs4x.glsl" } } },// ****DECODE
 			{ { { 0 },	"shdr-fs:draw-col-attr",			a3shader_fragment,	1,{ A3_DEMO_FS"e/drawColorAttrib_fs4x.glsl" } } },
 			// 00-common
-			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"00-common/e/drawTexture_fs4x.glsl" } } },// ****DECODE
-			{ { { 0 },	"shdr-fs:draw-Lambert",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/e/drawLambert_fs4x.glsl",// ****DECODE
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },// ****DECODE
-			{ { { 0 },	"shdr-fs:draw-Phong",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/e/drawPhong_fs4x.glsl",// ****DECODE
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },// ****DECODE
+			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"00-common/drawTexture_fs4x.glsl" } } },// ****DECODE
+			{ { { 0 },	"shdr-fs:draw-Lambert",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/drawLambert_fs4x.glsl",// ****DECODE
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },// ****DECODE
+			{ { { 0 },	"shdr-fs:draw-Phong",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/drawPhong_fs4x.glsl",// ****DECODE
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },// ****DECODE
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -561,39 +561,41 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
 
-	
+
+	/*
 	currentDemoProg = demoState->prog_drawTexture_instanced;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-texture-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
 	//...
-
+	*/
 	// Lambert
 	currentDemoProg = demoState->prog_drawLambert;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lambert");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_fs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	/*
 	currentDemoProg = demoState->prog_drawLambert_instanced;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lambert-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_fs->shader);
 
 	//...
-
+	*/
 	// Phong
 	currentDemoProg = demoState->prog_drawPhong;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-phong");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_fs->shader);
 
+	/*
 	currentDemoProg = demoState->prog_drawPhong_instanced;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-phong-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_fs->shader);
 	//...
-
+	*/
 
 	// ****DONE: 
 	//	-> uncomment program linking and validation
@@ -682,7 +684,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 		// ****TO-DO: 
 		//	-> set lighting uniform and block handles and defaults
-
+		a3demo_setUniformDefaultVec4(currentDemoProg, uLightPos, a3vec4_zero.v);
+		a3demo_setUniformDefaultVec4(currentDemoProg, uLightCol, a3vec4_one.v);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRad, defaultFloat);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadInv, defaultFloat);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadSq, defaultFloat);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadInvSq, defaultFloat);
 	}
 
 
