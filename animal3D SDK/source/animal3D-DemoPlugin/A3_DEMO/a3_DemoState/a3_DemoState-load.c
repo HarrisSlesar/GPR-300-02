@@ -690,6 +690,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadInv, defaultFloat);
 		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadSq, defaultFloat);
 		a3demo_setUniformDefaultFloat(currentDemoProg, uLightRadInvSq, defaultFloat);
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubLightData, 0);
 	}
 
 

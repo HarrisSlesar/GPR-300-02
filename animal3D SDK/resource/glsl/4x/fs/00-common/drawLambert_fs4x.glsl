@@ -46,7 +46,7 @@ uniform vec4 uLightPos; // world/camera space
 uniform vec4 uLightCol;
 uniform vec4 uColor;
 uniform sampler2D uAtlas;
-uniform int uCount;
+
 
 
 void main()

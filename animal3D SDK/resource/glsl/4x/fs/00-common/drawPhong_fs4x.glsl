@@ -62,6 +62,7 @@ void main()
 	vec4 pixelColor = texture2D(uAtlas, vTexcoord);
 	vec4 materialColor = pixelColor * uColor;
 
+	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
 
 	vec4 reflection = reflect(-L, N);
 	float EyeReflectionAngle = max(0.0, dot(N,reflection));
@@ -71,7 +72,7 @@ void main()
 	vec4 diffuseColor = materialColor * uLightCol * kd;
 
 	
-	rtFragColor =diffuseColor + specularColor;
+	rtFragColor =ambient + diffuseColor + specularColor;
 
 	// DEBUGGING
 	//rtFragColor = vec4(kd,kd,kd,1.0);

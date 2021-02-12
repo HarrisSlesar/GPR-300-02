@@ -235,12 +235,15 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 
 	// ****TO-DO: 
 	//	-> send lighting uniforms and bind blocks where appropriate
-	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, 1, demoMode->pointLightData->position.v);
-	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, 1, demoMode->pointLightData->color.v);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRad, 1, &demoMode->pointLightData->radius);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadSq, 1, &demoMode->pointLightData->radiusSq);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadInv, 1, &demoMode->pointLightData->radiusInv);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadInvSq, 1, &demoMode->pointLightData->radiusInvSq);
+
+	//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, introMaxCount_pointLight);
+	
+	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, introMaxCount_pointLight, demoMode->pointLightData->position.v);
+	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, introMaxCount_pointLight, demoMode->pointLightData->color.v);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRad, introMaxCount_pointLight, &demoMode->pointLightData->radius);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadSq, introMaxCount_pointLight, &demoMode->pointLightData->radiusSq);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadInv, introMaxCount_pointLight, &demoMode->pointLightData->radiusInv);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightRadInvSq, introMaxCount_pointLight, &demoMode->pointLightData->radiusInvSq);
 
 	// select pipeline algorithm
 	glDisable(GL_BLEND);

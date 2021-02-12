@@ -101,10 +101,12 @@ extern "C"
 				uLightPos,           //Light position
 				uLightWorldPos,
 				uLightCol,           //Light color
-				uLightRad,         //Light radii
+				uLightRad,         //Light radius
 				uLightRadSq,
 				uLightRadInv,
-				uLightRadInvSq;
+				uLightRadInvSq,
+
+				ubLightData;
 
 		};
 
