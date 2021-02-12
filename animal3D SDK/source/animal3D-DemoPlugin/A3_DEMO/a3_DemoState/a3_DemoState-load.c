@@ -551,7 +551,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
-	// ****DONE?: 
+	// ****DONE: 
 	//	-> set up missing shader programs, using hints above: 
 	//		-> texturing, Lambert and Phong
 	// 00-common programs: 
@@ -561,41 +561,17 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
 
-
-	/*
-	currentDemoProg = demoState->prog_drawTexture_instanced;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-texture-inst");
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_instanced_vs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
-	//...
-	*/
 	// Lambert
 	currentDemoProg = demoState->prog_drawLambert;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lambert");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_fs->shader);
 
-	/*
-	currentDemoProg = demoState->prog_drawLambert_instanced;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lambert-inst");
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_fs->shader);
-
-	//...
-	*/
 	// Phong
 	currentDemoProg = demoState->prog_drawPhong;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-phong");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_fs->shader);
-
-	/*
-	currentDemoProg = demoState->prog_drawPhong_instanced;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-phong-inst");
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_fs->shader);
-	//...
-	*/
 
 	// ****DONE: 
 	//	-> uncomment program linking and validation
@@ -682,7 +658,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVP, 0);
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVPB, 1);
 
-		// ****TO-DO: 
+		// ****DONE: 
 		//	-> set lighting uniform and block handles and defaults
 		a3demo_setUniformDefaultVec4(currentDemoProg, uLightPos, a3vec4_zero.v);
 		a3demo_setUniformDefaultVec4(currentDemoProg, uLightCol, a3vec4_one.v);

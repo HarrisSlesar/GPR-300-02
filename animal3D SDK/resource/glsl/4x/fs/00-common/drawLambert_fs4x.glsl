@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare varyings to receive lighting and shading variables
 //	-> declare lighting uniforms
 //		(hint: in the render routine, consolidate lighting data 
@@ -60,6 +60,7 @@ void main()
 	vec4 N = normalize(vNormal);
 	vec4 L = normalize(uLightPos - vPosition);
 	float kd = dot(N,L);
+
 	vec4 pixelColor = texture2D(uAtlas, vTexcoord);
 	vec4 materialColor = pixelColor * uColor;
 

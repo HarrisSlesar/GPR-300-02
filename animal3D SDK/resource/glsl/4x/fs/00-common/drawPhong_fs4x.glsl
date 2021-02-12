@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> start with list from "drawLambert_fs4x"
 //		(hint: can put common stuff in "utilCommon_fs4x" to avoid redundancy)
 //	-> calculate view vector, reflection vector and Phong coefficient
@@ -38,10 +38,6 @@ in vec2 vTexcoord;
 
 uniform vec4 uLightPos; // world/camera space
 uniform vec4 uLightCol;
-uniform float uLightRad;
-uniform float uLightRadInv;
-uniform float uLightRadSq;
-uniform float uLightRadInvSq;
 uniform vec4 uColor;
 uniform sampler2D uAtlas;
 
@@ -57,22 +53,24 @@ void main()
 
 	vec4 N = normalize(vNormal);
 	vec4 L = normalize(uLightPos - vPosition);
-	float kd = dot(N,L);
 
-	vec4 pixelColor = texture2D(uAtlas, vTexcoord);
-	vec4 materialColor = pixelColor * uColor;
+	float kd = dot(N,L); //The diffuse coeff
 
-	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
+	vec4 pixelColor = texture2D(uAtlas, vTexcoord); //Getting the pixelColor from the sampler
+	vec4 materialColor = pixelColor * uColor; //combining it with uColor for the material
 
-	vec4 reflection = reflect(-L, N);
-	float EyeReflectionAngle = max(0.0, dot(N,reflection));
-	float Spec = pow(EyeReflectionAngle, shininess);
-	vec4 specularColor = uLightCol * materialColor * Spec;
+	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0); //ambient light
 
-	vec4 diffuseColor = materialColor * uLightCol * kd;
+	vec4 reflection = reflect(-L, N); //The reflection for the specular calculation
+	float eyeReflectionAngle = max(0.0, dot(N,reflection)); //The angle for the reflection
+	float spec = pow(eyeReflectionAngle, shininess);  //the specular coeff
+
+	vec4 specularColor = uLightCol * materialColor * spec; //The specular color
+
+	vec4 diffuseColor = materialColor * uLightCol * kd; //the diffuse color
 
 	
-	rtFragColor =ambient + diffuseColor + specularColor;
+	rtFragColor =ambient + diffuseColor + specularColor; //combining all the colors
 
 	// DEBUGGING
 	//rtFragColor = vec4(kd,kd,kd,1.0);
