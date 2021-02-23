@@ -247,7 +247,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 		demoState->fbo_c16_szEighth,
 		demoState->fbo_c16_szEighth,
 		demoState->fbo_c16_szEighth,
-		demoState->fbo_c16x4_d24s8,
+		demoState->fbo_c16x4_d24s8, //incorrect
 		//...
 	};
 
@@ -263,7 +263,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	a3mat4 viewProjectionMat = activeCamera->projectorMatrixStackPtr->viewProjectionMat;
 	a3mat4 modelMat, modelViewMat, modelViewProjectionMat, atlasMat;
 
-	// FSQ matrix
+	// FSQ matrix  Full screen quad matrix
 	const a3mat4 fsq = {
 		2.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 2.0f, 0.0f, 0.0f,
