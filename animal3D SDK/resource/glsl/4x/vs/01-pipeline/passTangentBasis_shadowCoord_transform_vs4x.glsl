@@ -99,7 +99,7 @@ void main()
 
 	shadowMatrix = uLight.viewProjectionBiasMat * uModel[uIndex].modelMat;
 
-	vShadowCoord = shadowMatrix * aPosition;
+	vShadowcoord = shadowMatrix * aPosition;
 
 
 	vVertexID = gl_VertexID;
