@@ -30,7 +30,7 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
-in vec2 vTexcoord; //whatever name i set in tangentBasis
+in vec2 vTexcoord_atlas; //whatever name i set in tangentBasis
 
 uniform vec2 uAxis;
 
