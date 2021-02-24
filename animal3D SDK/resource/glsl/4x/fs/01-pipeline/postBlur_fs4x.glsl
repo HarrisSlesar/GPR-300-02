@@ -30,14 +30,17 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
-in vec2 vTexcoord; //not whatever name i set in tangentBasis
+in vec2 vTexcoord; //whatever name i set in tangentBasis
 
 uniform vec2 uAxis;
+
+uniform sampler uAtlas;
 
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
+	vec4 color = texture(uAtlas, vTexcoord);
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
 	rtFragColor = vec4(0.0, 1.0, 0.5, 1.0); 
 

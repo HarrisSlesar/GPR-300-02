@@ -37,8 +37,15 @@ layout (location = 0) out vec4 rtFragColor;
 
 uniform int uCount;
 
+uniform sampler uTex_shadow;
+
+
+in vec4 vShadowcoord;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+
+	rtFragColor = textureProj(uTex_shadow, vShadowcoord) * vec4(1.0); //Bluebook page 653
 }

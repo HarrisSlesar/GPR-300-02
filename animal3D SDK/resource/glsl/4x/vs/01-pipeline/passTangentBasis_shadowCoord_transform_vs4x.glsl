@@ -47,6 +47,9 @@ layout (location = 0) in vec4 aPosition;
 flat out int vVertexID;
 flat out int vInstanceID;
 
+out vec2 vTexcoord;
+out vec4 vShadowcoord;
+
 
 
 uniform int uIndex;
@@ -85,7 +88,7 @@ uniform ubTransformStack
 };
 
 
-
+mat4 shadowMatrix;
 
 void main()
 {
@@ -93,6 +96,11 @@ void main()
 	//gl_Position = aPosition;
 
 	gl_Position = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
+
+	shadowMatrix = uLight.viewProjectionBiasMat * uModel[uIndex].modelMat;
+
+	vShadowCoord = shadowMatrix * aPosition;
+
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
