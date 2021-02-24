@@ -49,7 +49,8 @@ flat out int vInstanceID;
 
 out vec2 vTexcoord;
 out vec4 vShadowcoord;
-
+out vec4 vPosition;
+out vec2 vNormal;
 
 
 uniform int uIndex;
@@ -98,10 +99,18 @@ void main()
 
 	gl_Position = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
 
+	vPosition = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
+
 	shadowMatrix = uLight.viewProjectionBiasMat * uModel[uIndex].modelMat;
 
 	vShadowcoord = shadowMatrix * aPosition;
 
+	
+	vNormal = uMV_nrm * vec4(aNormal, 0.0); // camera-space
+
+
+
+	vTexcoord = aTexcoord;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
