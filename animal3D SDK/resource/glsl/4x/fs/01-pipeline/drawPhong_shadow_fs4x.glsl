@@ -37,15 +37,51 @@ layout (location = 0) out vec4 rtFragColor;
 
 uniform int uCount;
 
-uniform sampler uTex_shadow;
+uniform sampler2D uTex_shadow;
 
 
 in vec4 vShadowcoord;
+in vec4 vPosition;
+in vec4 vNormal;
+in vec2 vTexcoord;
+
+uniform vec4 uLightPos; // world/camera space
+uniform vec4 uLightCol;
+uniform vec4 uColor;
+uniform sampler2D uAtlas;
+
+float shininess = 128.0;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	// DUMMY OUTPUT: all fragments are OPAQUE LIME
+	//rtFragColor = vec4(0.5, 1.0, 0.0, 1.0);
 
-	rtFragColor = textureProj(uTex_shadow, vShadowcoord) * vec4(1.0); //Bluebook page 653
+	// diffuse coeff = dot(unit surface normal,
+	//                     unit light vector)
+
+	vec4 N = normalize(vNormal);
+	vec4 L = normalize(uLightPos - vPosition);
+
+	float kd = dot(N,L); //The diffuse coeff
+
+	vec4 pixelColor = texture2D(uAtlas, vTexcoord); //Getting the pixelColor from the sampler
+	vec4 materialColor = pixelColor * uColor; //combining it with uColor for the material
+
+	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0); //ambient light
+
+	vec4 reflection = reflect(-L, N); //The reflection for the specular calculation
+	float eyeReflectionAngle = max(0.0, dot(N,reflection)); //The angle for the reflection
+	float spec = pow(eyeReflectionAngle, shininess);  //the specular coeff
+
+	vec4 specularColor = uLightCol * materialColor * spec; //The specular color
+
+	vec4 diffuseColor = materialColor * uLightCol * kd; //the diffuse color
+
+	vec4 phong = ambient + diffuseColor + specularColor;
+	
+	rtFragColor = textureProj(uTex_shadow, vShadowcoord) * phong;
+	// DEBUGGING
+	//rtFragColor = vec4(kd,kd,kd,1.0);
 }
+

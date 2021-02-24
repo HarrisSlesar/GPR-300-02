@@ -95,6 +95,7 @@ void main()
 	// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
 
+
 	gl_Position = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
 
 	shadowMatrix = uLight.viewProjectionBiasMat * uModel[uIndex].modelMat;
