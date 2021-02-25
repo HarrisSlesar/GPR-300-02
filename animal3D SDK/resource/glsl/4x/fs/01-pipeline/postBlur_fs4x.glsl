@@ -34,7 +34,7 @@ in vec2 vTexcoord_atlas; //whatever name i set in tangentBasis
 
 uniform vec2 uAxis;
 
-uniform sampler uAtlas;
+uniform sampler2D uAtlas;
 
 layout (location = 0) out vec4 rtFragColor;
 
