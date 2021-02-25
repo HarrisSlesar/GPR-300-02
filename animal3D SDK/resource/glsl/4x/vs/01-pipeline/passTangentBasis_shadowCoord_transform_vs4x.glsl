@@ -43,6 +43,8 @@
 //	-> declare and write varying for shadow coordinate
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec3 aNormal;
+layout (location = 8) in vec2 aTexcoord;
 
 flat out int vVertexID;
 flat out int vInstanceID;
@@ -50,8 +52,8 @@ flat out int vInstanceID;
 out vec2 vTexcoord;
 out vec4 vShadowcoord;
 out vec4 vPosition;
-out vec2 vNormal;
-
+out vec4 vNormal;
+out vec4 vView;
 
 uniform int uIndex;
 
@@ -79,6 +81,7 @@ struct sModelMatrixStack
 	mat4 atlasMat;						// atlas matrix (texture -> cell)
 };
 
+
 // What's in the buffer:
 //  -> Projecters (camera, main light)
 //  -> models
@@ -89,28 +92,31 @@ uniform ubTransformStack
 };
 
 
+
 mat4 shadowMatrix;
+
+
+
+
 
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
 
+	vPosition = uModel[uIndex].modelViewMat * aPosition;
 
-	gl_Position = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
-
-	vPosition = uCamera.projectionMat * uModel[uIndex].modelViewMat * aPosition;
+	gl_Position = uCamera.projectionMat * vPosition;
 
 	shadowMatrix = uLight.viewProjectionBiasMat * uModel[uIndex].modelMat;
 
 	vShadowcoord = shadowMatrix * aPosition;
-
 	
-	vNormal = uMV_nrm * vec4(aNormal, 0.0); // camera-space
-
-
-
+	vNormal = uModel[uIndex].modelViewMat * vec4(aNormal, 0.0); // camera-space
 	vTexcoord = aTexcoord;
+	vView = -vPosition;
+
+
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

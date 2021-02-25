@@ -44,13 +44,31 @@ in vec4 vShadowcoord;
 in vec4 vPosition;
 in vec4 vNormal;
 in vec2 vTexcoord;
+in vec4 vView;
+in vec4 vLightVec;
 
-uniform vec4 uLightPos; // world/camera space
-uniform vec4 uLightCol;
 uniform vec4 uColor;
 uniform sampler2D uAtlas;
 
+uniform vec4 specular_albedo = vec4(0.7);
 float shininess = 128.0;
+
+struct sPointLightData
+{
+	vec4 position;					// position in rendering target space
+	vec4 worldPos;					// original position in world space
+	vec4 color;						// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;					// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLightData uLightData;
+};
+
 
 void main()
 {
@@ -61,26 +79,34 @@ void main()
 	//                     unit light vector)
 
 	vec4 N = normalize(vNormal);
-	vec4 L = normalize(uLightPos - vPosition);
+	vec4 L = normalize(uLightData.position - vPosition);
+	vec4 V = normalize(vView);
 
-	float kd = dot(N,L); //The diffuse coeff
+	float lightDistance = length(L);
+
+	vec4 reflection = reflect(-L, N); //The reflection for the specular calculation
+
+	
 
 	vec4 pixelColor = texture2D(uAtlas, vTexcoord); //Getting the pixelColor from the sampler
 	vec4 materialColor = pixelColor * uColor; //combining it with uColor for the material
 
-	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0); //ambient light
+	vec4 diffuse = max(dot(N, L), 0.0) * materialColor;
 
-	vec4 reflection = reflect(-L, N); //The reflection for the specular calculation
-	float eyeReflectionAngle = max(0.0, dot(N,reflection)); //The angle for the reflection
-	float spec = pow(eyeReflectionAngle, shininess);  //the specular coeff
+	vec4 specular = pow(max(dot(reflection, V), 0.0), shininess) *
+materialColor;
 
-	vec4 specularColor = uLightCol * materialColor * spec; //The specular color
 
-	vec4 diffuseColor = materialColor * uLightCol * kd; //the diffuse color
 
-	vec4 phong = ambient + diffuseColor + specularColor;
-	
-	rtFragColor = textureProj(uTex_shadow, vShadowcoord) * phong;
+	vec4 specularColor = uLightData.color * specular; //The specular color
+
+	vec4 diffuseColor =uLightData.color * diffuse; //the diffuse color
+
+	vec4 phong = diffuseColor + specularColor;
+
+	vec4 shadowColor = textureProj(uTex_shadow, vShadowcoord);
+
+	rtFragColor = phong * shadowColor;
 	// DEBUGGING
 	//rtFragColor = vec4(kd,kd,kd,1.0);
 }

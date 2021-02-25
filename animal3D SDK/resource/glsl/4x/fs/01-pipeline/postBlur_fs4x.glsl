@@ -40,7 +40,7 @@ layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-	vec4 color = texture(uAtlas, vTexcoord);
+	//vec4 color = texture(uAtlas, vTexcoord);
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
 	rtFragColor = vec4(0.0, 1.0, 0.5, 1.0); 
 
