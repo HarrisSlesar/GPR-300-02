@@ -29,10 +29,44 @@
 //	-> implement some sort of blending algorithm that highlights bright areas
 //		(hint: research some Photoshop blend modes)
 
+uniform sampler2D uImage00;
+uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+
+
+uniform sampler2D fbo_c16x4_d24s8; //scene
+uniform sampler2D fbo_c16_szHalf[3]; //half bright
+uniform sampler2D fbo_c16_szQuarter[3];
+uniform sampler2D fbo_c16_szEighth[3];
+
+
+
+uniform vec4 uColor;
+
+uniform sampler2D uAtlas;
+uniform vec4 vTexcoord_atlas;
+
+float exposure = 1;
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE PURPLE
-	rtFragColor = vec4(0.5, 0.0, 1.0, 1.0);
+	//rtFragColor = vec4(0.5, 0.0, 1.0, 1.0);
+
+	const float gamma = 2.2;
+    vec3 hdrColor = texture2D(uImage00, vTexcoord_atlas.xy).rgb;      
+    vec3 blur2Col = texture2D(uImage01, vTexcoord_atlas.xy).rgb;
+	vec3 blur4Col = texture2D(uImage02, vTexcoord_atlas.xy).rgb;
+	vec3 blur8Col = texture2D(uImage03, vTexcoord_atlas.xy).rgb;
+    hdrColor += blur2Col; // additive blending
+	hdrColor += blur4Col;
+	hdrColor += blur8Col;
+    // tone mapping
+    vec3 result = vec3(1.0) - exp(-hdrColor);
+    // also gamma correct while we're at it       
+    result = pow(result, vec3(1.0 / gamma));
+    rtFragColor = vec4(result,1.0);
+
 }
