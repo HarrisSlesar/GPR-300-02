@@ -34,10 +34,10 @@ in vec4 vTexcoord_atlas; //whatever name i set in tangentBasis
 
 uniform vec2 uAxis;
 
-uniform sampler2D uImage00;
+
 
 layout (location = 0) out vec4 rtFragColor;
-
+layout (binding = 0) uniform sampler2D image;
 
 //Weights and code referenced from https://learnopengl.com/Advanced-Lighting/Bloom
 float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
@@ -48,14 +48,14 @@ void main()
 	//vec4 color = texture(uAtlas, vTexcoord);
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
 	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0); 
-	vec3 c = texture2D(uImage00, vTexcoord_atlas.xy).rgb * weight[0];
+	vec3 c = texture2D(image, vTexcoord_atlas.xy).rgb * weight[0];
 	
 	
 
 	for (int i = 1; i < weight.length(); i++)
 	{
-		c += texture(uImage00, vTexcoord_atlas.xy + vec2(uAxis * i)).rgb * weight[i];
-        c += texture(uImage00, vTexcoord_atlas.xy - vec2(uAxis * i)).rgb * weight[i];
+		c += texture(image, vTexcoord_atlas.xy + vec2(uAxis * i)).rgb * weight[i];
+        c += texture(image, vTexcoord_atlas.xy - vec2(uAxis * i)).rgb * weight[i];
 	}
 	
 	rtFragColor = vec4(c, 1.0);

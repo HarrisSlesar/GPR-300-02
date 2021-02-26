@@ -31,10 +31,9 @@
 //		image are emphasized, and the darker areas get darker
 
 layout (location = 0) out vec4 rtFragColor;
-
+layout (binding = 0) uniform sampler2D image;
 
 in vec4 vTexcoord_atlas;
-uniform vec4 uColor;
 
 uniform sampler2D uAtlas;
 uniform sampler2D uImage00;
@@ -46,13 +45,11 @@ void main()
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
 	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 	
-	vec4 pixelColor = texture2D(uImage00, vTexcoord_atlas.xy); //Getting the pixelColor from the sampler
+	vec4 pixelColor = texture2D(image, vTexcoord_atlas.xy); //Getting the pixelColor from the sampler
 	vec4 color = pixelColor; //combining it with uColor for the material
 	
     // check whether fragment output is higher than threshold, if so output as brightness color
-	
-  
-  float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
 	rtFragColor = color * brightness;
      
 }

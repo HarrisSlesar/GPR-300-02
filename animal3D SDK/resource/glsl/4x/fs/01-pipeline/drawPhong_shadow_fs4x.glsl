@@ -34,7 +34,7 @@
 //	-> perform "shadow test" (explained in class)
 
 layout (location = 0) out vec4 rtFragColor;
-
+layout (binding = 0) uniform sampler2D image;
 uniform int uCount;
 
 uniform sampler2D uTex_shadow;
@@ -77,7 +77,7 @@ void main()
 
 	vec4 V = normalize(vView);
 	vec4 N = normalize(vNormal);
-	vec4 materialColor = texture2D(uAtlas, vTexcoord); //Getting the pixelColor from the sampler
+	vec4 materialColor = texture2D(image, vTexcoord); //Getting the pixelColor from the sampler
 	vec3 shadowColor = textureProj(uTex_shadow, vShadowcoord).rgb;
 	for(int i = 0; i < uCount; i++)
 	{
