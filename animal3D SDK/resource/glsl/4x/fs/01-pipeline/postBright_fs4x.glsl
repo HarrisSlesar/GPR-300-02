@@ -45,11 +45,12 @@ void main()
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
 	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 	
+	//code inspiration from https://learnopengl.com/Advanced-Lighting/Bloom
+
+
 	vec4 pixelColor = texture2D(image, vTexcoord_atlas.xy); //Getting the pixelColor from the sampler
-	vec4 color = pixelColor; //combining it with uColor for the material
-	
     // check whether fragment output is higher than threshold, if so output as brightness color
-	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-	rtFragColor = color * brightness;
+	float brightness = dot(pixelColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	rtFragColor = pixelColor * brightness;
      
 }

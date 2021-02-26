@@ -50,7 +50,7 @@ void main()
 	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0); 
 	vec3 c = texture2D(image, vTexcoord_atlas.xy).rgb * weight[0];
 	
-	
+	//Code inspiration from https://learnopengl.com/Advanced-Lighting/Bloom
 
 	for (int i = 1; i < weight.length(); i++)
 	{
