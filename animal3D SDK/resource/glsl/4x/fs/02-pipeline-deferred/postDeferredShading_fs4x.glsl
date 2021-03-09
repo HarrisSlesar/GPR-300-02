@@ -54,6 +54,7 @@ uniform sampler2D uImage07; // depth g-buffer
 //Testing
 uniform sampler2D uImage02, uImage03; //nrm, ht
 
+uniform mat4 uPB_inv; //inverse bias projection
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -65,9 +66,20 @@ void main()
 	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 
 	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
-
 	vec4 diffuseSample = texture(uImage00,  sceneTexcoord.xy);
 	vec4 specularSample = texture(uImage01,  sceneTexcoord.xy);
+
+	vec4 position_screen = vTexcoord_atlas;
+	position_screen.z = texture(uImage07, vTexcoord_atlas.xy).r;
+
+	vec4 position_view = uPB_inv * position_screen;
+	position_view /= position_view.w; //reverse perspective divide
+	//from view to bias clip we need a projection bias
+	//to get back to view we need to get the inverse
+
+
+	vec4 normal = texture(uImage05, vTexcoord_atlas.xy);
+	normal = (normal - 0.5) * 2.0; //Still in camera space
 
 	// Phong shading:
 	// ambient
@@ -84,7 +96,12 @@ void main()
 
 
 	// DEBUGGING
-	rtFragColor = diffuseSample * specularSample;
+	rtFragColor = diffuseSample;
 	//rtFragColor = texture(uImage02, vTexcoord_atlas.xy);  Normal
 	//rtFragColor = texture(uImage07, vTexcoord_atlas.xy); depth
+	//rtFragColor = position_screen;
+	rtFragColor = position_view;
+
+	//final transparency
+	rtFragColor.a = diffuseSample.a;
 }

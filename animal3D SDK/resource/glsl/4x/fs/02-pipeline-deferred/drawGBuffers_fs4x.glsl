@@ -36,6 +36,8 @@ in vec4 vPosition;
 in vec4 vNormal;
 in vec4 vTexcoord;
 
+in vec4 vPosition_screen;
+
 //layout (location = 0) out vec4 rtFragColor;
 layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
@@ -47,5 +49,6 @@ void main()
 	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 	rtTexcoord = vTexcoord;
 	rtNormal = vec4(normalize(vNormal.xyz) * 0.5 + 0.5, 1.0);
-	rtPosition = vPosition;
+	//rtPosition = vPosition;
+	rtPosition = vPosition_screen / vPosition_screen.w; //Perspective divide. Done to convert clip space to screen space. Because bias is applied, it goes from -1 1 to 0 1
 }
