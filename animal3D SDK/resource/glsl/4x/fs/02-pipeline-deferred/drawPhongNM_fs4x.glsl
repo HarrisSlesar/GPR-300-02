@@ -26,7 +26,7 @@
 
 #define MAX_LIGHTS 1024
 
-// ****TO-DO:
+// ****DONE:
 //	-> declare view-space varyings from vertex shader
 //	-> declare point light data structure and uniform block
 //	-> declare uniform samplers (diffuse, specular & normal maps)
@@ -39,6 +39,13 @@
 uniform int uCount;
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtNormal;
+
+
+uniform sampler2D uImage00; // Diffuse Atlas
+uniform sampler2D uImage01; // Specular Atlas
+uniform sampler2D uImage02; //nrm
+uniform sampler2D uAtlas;
 
 // location of viewer in its own space is the origin
 const vec4 kEyePos_view = vec4(0.0, 0.0, 0.0, 1.0);
@@ -60,8 +67,50 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
+struct sPointLightData
+{
+	vec4 position;					// position in rendering target space
+	vec4 worldPos;					// original position in world space
+	vec4 color;						// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;					// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+uniform ubLight
+{
+	sPointLightData uPointLightData[MAX_LIGHTS];
+};
+
+in vec4 vPosition;
+in vec4 vNormal;
+in vec4 vTexcoord;
+
+in vec4 vPosition_screen;
+
+
 void main()
 {
+	vec4 N = normalize(texture(uImage02, vTexcoord.xy) * 2.0 - vec4(1.0));
+
+	
+
+	vec4 diffuseColor, specularColor;
+	vec4 finalDiff, finalSpec = vec4(0.0f);
+	vec4 color = texture(uAtlas, vTexcoord.xy);
+
+	for(int i = 0; i < uCount; i++)
+	{
+		vec4 radiusInfo = vec4(uPointLightData[i].radius, uPointLightData[i].radiusSq, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq);
+
+		calcPhongPoint(diffuseColor,specularColor,kEyePos_view, vPosition, N, color, uPointLightData[i].position, radiusInfo, uPointLightData[i].color);
+		finalDiff += diffuseColor;
+		finalSpec += specularColor;
+	}
+
+	rtFragColor = vec4((finalDiff+finalSpec).xyz,1.0);
+	rtNormal = N;
+
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
