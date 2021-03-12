@@ -77,6 +77,7 @@ uniform ubLight
 
 float attenuation(in float dist, in float distSq, in float lightRadiusInv, in float lightRadiusInvSq);
 
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
@@ -112,35 +113,31 @@ void main()
 	//		
 	
 	vec4 finalColor = vec4(0.0,0.0,0.0,1.0);
-
-	vec4 color = texture(uTex_dm, sceneTexcoord.xy);
+	vec4 finalDiff = vec4(0.0);
+	vec4 finalSpec = vec4(0.0);
 	
-
-	vec4 eyeDir = normalize(position_view-position_screen);
 	for(int i = 0; i < uCount; i++)
 	{
+		
 		vec3 L = uPointLightData[i].position.xyz - position_view.xyz;
 		float dist = length(L);
 		L = normalize(L);
 		vec3 N = normalize(normal.xyz);
 		vec3 R = reflect(-L, N);
 		
-		vec4 diffuse = max(dot(N,L),0.0) * diffuseSample;
-		vec4 specular = pow(max(dot(R, position_screen.xyz),0.0),specularSample.w) * specularSample;
 
-		float A = attenuation(dist, pow(dist,2), uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq);
-		vec4 diffuse_color = uPointLightData[i].color * diffuse * A;
-		vec4 specular_color = uPointLightData[i].color * specular * A;
-		finalColor += vec4(diffuse_color.xyz + specular_color.xyz, 0.0);
+
+		vec3 diffuse = (max(0.0,dot(N,L))*0.9+0.1) * diffuseSample.xyz;
+		vec3 specular = pow(max(dot(R, normalize(position_screen).xyz),0.0),specularSample.w) * specularSample.xyz;
+
+		float A = attenuation(dist, dist*dist, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq);
+		vec3 diffuse_color = uPointLightData[i].color.xyz * diffuse * A;
+		vec3 specular_color = uPointLightData[i].color.xyz * specular * A;
+		finalDiff += vec4(diffuse_color.xyz, 0.0);
+		finalSpec += vec4(specular_color,1.0);
 	}
 
-	rtFragColor = finalColor * color;
-	// DEBUGGING
-	//rtFragColor = diffuseSample;
-	//rtFragColor = texture(uImage02, vTexcoord_atlas.xy);  Normal
-	//rtFragColor = texture(uImage07, vTexcoord_atlas.xy); depth
-	//rtFragColor = position_screen;
-	//rtFragColor = position_view;
+	rtFragColor = vec4(finalDiff.xyz + finalSpec.xyz,diffuseSample.a);
 	
 
 
