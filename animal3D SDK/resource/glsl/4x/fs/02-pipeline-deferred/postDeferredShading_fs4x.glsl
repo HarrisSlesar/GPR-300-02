@@ -45,20 +45,37 @@ uniform int uCount;
 
 uniform sampler2D uImage00; // Diffuse Atlas
 uniform sampler2D uImage01; // Specular Atlas
-
 uniform sampler2D uImage04; // texCoords g-buffer
 uniform sampler2D uImage05; // normals  g-buffer
 //uniform sampler2D uImage06; // position g-buffer
 uniform sampler2D uImage07; // depth g-buffer
-
+uniform sampler2D uTex_dm;
+uniform vec4 uColor;
 //Testing
-uniform sampler2D uImage02, uImage03; //nrm, ht
+//uniform sampler2D uImage02, uImage03; //nrm, ht
 
 uniform mat4 uPB_inv; //inverse bias projection
 
 layout (location = 0) out vec4 rtFragColor;
 
 
+
+struct sPointLightData
+{
+	vec4 position;					// position in rendering target space
+	vec4 worldPos;					// original position in world space
+	vec4 color;						// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;					// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+uniform ubLight
+{
+	sPointLightData uPointLightData[MAX_LIGHTS];
+};
+
+float attenuation(in float dist, in float distSq, in float lightRadiusInv, in float lightRadiusInvSq);
 
 void main()
 {
@@ -93,15 +110,40 @@ void main()
 	//		-> normals, position, depth -> geometry buffers!!!
 	//	-> texture coords -> g-buffer
 	//		
+	
+	vec4 finalColor = vec4(0.0,0.0,0.0,1.0);
 
+	vec4 color = texture(uTex_dm, sceneTexcoord.xy);
+	
 
+	vec4 eyeDir = normalize(position_view-position_screen);
+	for(int i = 0; i < uCount; i++)
+	{
+		vec3 L = uPointLightData[i].position.xyz - position_view.xyz;
+		float dist = length(L);
+		L = normalize(L);
+		vec3 N = normalize(normal.xyz);
+		vec3 R = reflect(-L, N);
+		
+		vec4 diffuse = max(dot(N,L),0.0) * diffuseSample;
+		vec4 specular = pow(max(dot(R, position_screen.xyz),0.0),specularSample.w) * specularSample;
+
+		float A = attenuation(dist, pow(dist,2), uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq);
+		vec4 diffuse_color = uPointLightData[i].color * diffuse * A;
+		vec4 specular_color = uPointLightData[i].color * specular * A;
+		finalColor += vec4(diffuse_color.xyz + specular_color.xyz, 0.0);
+	}
+
+	rtFragColor = finalColor * color;
 	// DEBUGGING
-	rtFragColor = diffuseSample;
+	//rtFragColor = diffuseSample;
 	//rtFragColor = texture(uImage02, vTexcoord_atlas.xy);  Normal
 	//rtFragColor = texture(uImage07, vTexcoord_atlas.xy); depth
 	//rtFragColor = position_screen;
-	rtFragColor = position_view;
+	//rtFragColor = position_view;
+	
+
 
 	//final transparency
-	rtFragColor.a = diffuseSample.a;
+	//rtFragColor.a = diffuseSample.a;
 }

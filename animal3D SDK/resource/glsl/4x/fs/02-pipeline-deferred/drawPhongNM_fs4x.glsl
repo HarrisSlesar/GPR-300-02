@@ -39,7 +39,7 @@
 uniform int uCount;
 
 layout (location = 0) out vec4 rtFragColor;
-layout (location = 1) out vec4 rtNormal;
+
 
 
 uniform sampler2D uImage00; // Diffuse Atlas
@@ -91,7 +91,7 @@ in vec4 vPosition_screen;
 
 void main()
 {
-	vec4 N = normalize(texture(uImage02, vTexcoord.xy) * 2.0 - vec4(1.0));
+	vec4 N = normalize(texture(uImage02, vTexcoord.xy) * 2.0);
 
 	
 
@@ -109,7 +109,6 @@ void main()
 	}
 
 	rtFragColor = vec4((finalDiff+finalSpec).xyz,1.0);
-	rtNormal = N;
 
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
 	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
