@@ -50,7 +50,7 @@ uniform sampler2D uImage05; // normals  g-buffer
 //uniform sampler2D uImage06; // position g-buffer
 uniform sampler2D uImage07; // depth g-buffer
 uniform sampler2D uTex_dm;
-uniform vec4 uColor;
+
 //Testing
 //uniform sampler2D uImage02, uImage03; //nrm, ht
 

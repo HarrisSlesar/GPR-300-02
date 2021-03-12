@@ -33,9 +33,27 @@
 in vec4 vTexcoord_atlas;
 
 layout (location = 0) out vec4 rtFragColor;
+layout (binding = 1) uniform sampler2D diffuse;
+layout (binding = 2) uniform sampler2D specular;
+
+uniform sampler2D uImage00; // Diffuse Atlas
+uniform sampler2D uImage01; // Specular Atlas
+uniform sampler2D uImage04; // texCoords g-buffer
+
 
 void main()
 {
+
+	vec4 screenTexcoord = texture(uImage04, vTexcoord_atlas.xy);
+
+	vec4 diffuseSample = texture(uImage00, screenTexcoord.xy);
+	vec4 specSample = texture(uImage01, screenTexcoord.xy);
+
+	vec4 diffColor = texture(diffuse,screenTexcoord.xy);
+	vec4 specColor = texture(specular, screenTexcoord.xy);
+
+	rtFragColor = diffuseSample;
+
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
+	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
 }

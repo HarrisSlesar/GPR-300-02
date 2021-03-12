@@ -331,6 +331,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		a3shaderProgramActivate(currentDemoProgram->program);
 
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01);
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //normal
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); //position not needed
@@ -339,7 +340,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 
 		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm); //Sending the projection bias inverse 
-		a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformBlend);
+		a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformStack);
 		
 		//...
 
@@ -352,9 +353,12 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//		point lights are spheres), and using additive blending
 		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		//...
+		
+		glEnable(GL_BLEND);
 		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);
-		//...
+		glBlendFunc(GL_ONE, GL_ONE);
+		
+		
 	}
 
 
@@ -404,7 +408,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		currentDemoProgram = demoState->prog_postDeferredShading;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
-
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01);
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //normal
 		//a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); //position not needed
@@ -425,6 +429,9 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		currentDemoProgram = demoState->prog_postDeferredLightingComposite;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01);
+		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit02, 0);
+		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit03, 1);
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //normal
 		//a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); //position not needed

@@ -46,11 +46,28 @@ const mat4 bias = mat4(
 	0.5, 0.5, 0.5, 1.0
 );
 
+
+
+
+uniform ubTransformMVP
+{
+	mat4 uPointLightMVP[MAX_INSTANCES];
+};
+
+
+out vec4 vBiasedClipSpacePos;
+
+
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
-
+	
+	
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
+
+	vec4 mvpPosition = uPointLightMVP[vInstanceID] * aPosition;
+
+	gl_Position = mvpPosition;
+	vBiasedClipSpacePos = bias * mvpPosition;
+	
 }
