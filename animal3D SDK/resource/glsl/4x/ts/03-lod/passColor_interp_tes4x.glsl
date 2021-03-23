@@ -31,11 +31,33 @@
 
 layout (isolines, equal_spacing) in;
 
+uniform ubCurve
+{
+	vec4 uCurveWaypoint[32];
+	vec4 uCurveTangent[32];
+};
+uniform int uCount;
+
 uniform mat4 uP;
 
 out vec4 vColor;
 
 void main()
 {
+	int i0 = gl_PrimitiveID;
+	int i1 = (i0 + 1) % uCount;
+	float t = gl_TessCoord.x;
 	
+	vec4 p = mix(
+		uCurveWaypoint[i0],
+		uCurveWaypoint[i1],
+		t);
+	//Replace this linear interpolation with another algorithm to draw a curve
+
+	//vec4 p = vec4(gl_TessCoord.xy, -1.0, 1.0);
+
+
+	gl_Position = uP * p;
+
+	vColor = vec4(0.5, 0.5, t, 1.0);
 }
