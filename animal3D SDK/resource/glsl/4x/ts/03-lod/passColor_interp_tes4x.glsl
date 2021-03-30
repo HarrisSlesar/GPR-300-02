@@ -42,17 +42,40 @@ uniform mat4 uP;
 
 out vec4 vColor;
 
+mat4 MH = mat4(
+				1, 0, -3, 2,
+				0, 1, -2, 1,
+				0, 0, 3, -2,
+				0, 0, -1, 1);
+
 void main()
 {
 	int i0 = gl_PrimitiveID;
 	int i1 = (i0 + 1) % uCount;
 	float t = gl_TessCoord.x;
 	
+	/*
 	vec4 p = mix(
 		uCurveWaypoint[i0],
 		uCurveWaypoint[i1],
 		t);
+		*/
 	//Replace this linear interpolation with another algorithm to draw a curve
+
+	
+	vec4 p;
+	vec4 slope0 = uCurveTangent[i0] - uCurveWaypoint[i0];
+	vec4 slope1 = uCurveTangent[i1] - uCurveWaypoint[i1];
+
+	mat4 influenceMat = mat4(uCurveWaypoint[i0], slope0, uCurveWaypoint[i1], slope1); 
+
+	vec4 tVec = vec4(1, t, t*t, t*t*t);
+
+	
+	p =influenceMat * MH * tVec;
+	
+
+
 
 	//vec4 p = vec4(gl_TessCoord.xy, -1.0, 1.0);
 

@@ -53,12 +53,32 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 	{
 		a3_SceneObjectData* sceneObjectData = demoMode->obj_teapot->dataPtr;
 
-		// ****TO-DO: 
+		
+		// ****TO-DO: DATA CAN BE FOUND IN DemoMode3_Curves.h
 		//	-> interpolate teapot's position using algorithm that matches path drawn
 		//		(hint: use the one that looks the best)
 		//	-> update the animation timer
 		//		(hint: check if we've surpassed the segment's duration)
 		// teapot follows curved path
+		
+		a3ui32 indexStart = demoMode->curveSegmentIndex;
+		a3ui32 indexEnd = (indexStart + 1) % demoMode->curveWaypointCount;
+
+
+		demoMode->curveSegmentTime += (a3f32)dt;
+		if (demoMode->curveSegmentTime >= demoMode->curveSegmentDuration)
+		{
+			demoMode->curveSegmentTime -= demoMode->curveSegmentDuration;
+			indexStart = indexEnd;
+			indexEnd = (indexStart + 1) % demoMode->curveWaypointCount;
+		}
+		demoMode->curveSegmentIndex = indexStart;
+
+		demoMode->curveSegmentParam = demoMode->curveSegmentTime * demoMode->curveSegmentDurationInv;
+
+	
+
+		a3real4Lerp(sceneObjectData->position.v, demoMode->curveWaypoint[indexStart].v, demoMode->curveWaypoint[indexEnd].v, demoMode->curveSegmentParam);
 
 	}
 }
