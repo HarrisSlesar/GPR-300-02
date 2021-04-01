@@ -64,6 +64,67 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	//	-> step along view vector until intersecting height map
 	//	-> determine precise intersection point, return resulting coordinate
 	
+	vec3 cEND = vec3(coord.xy-viewVec.xy/viewVec.z,0);
+	coord.z = 1;
+	float n = float(steps);
+	float dt = 1/n;
+	float t = 0.0f;
+	
+	/*
+	vec2 P = viewVec.xy; 
+    vec2 deltaTexCoords = P / float(steps);
+
+	vec2  currentTexCoords = coord.xy;
+	float currentDepthMapValue = texture(uTex_dm, currentTexCoords).x;
+  
+	while(t < currentDepthMapValue)
+	{
+		// shift texture coordinates along direction of P
+		currentTexCoords -= deltaTexCoords;
+		// get depthmap value at current texture coordinates
+		currentDepthMapValue = texture(uTex_dm, currentTexCoords).x;  
+		// get depth of next layer
+		t +=dt;  
+	}
+	*/
+
+	
+	vec3 coordT = mix(coord,cEND,t);
+	vec3 prevCoordT = coord;
+
+	float coordHeight = coordT.z;
+	float prevHeight = prevCoordT.z;
+
+	float bumpHeight = texture(uTex_hm,coordT.xy).x;
+	float prevBumpHeight = texture(uTex_hm,prevCoordT.xy).x;
+
+	while(t < 1)
+	{
+	
+		if(bumpHeight > coordHeight)
+		{
+			float deltaH = coordHeight - prevHeight;
+			float deltaB = bumpHeight - prevBumpHeight;
+
+			float x = (prevHeight - prevBumpHeight) / (deltaB - deltaH);
+			//return coord-(cEND*bumpHeight);
+			return mix(prevCoordT, coordT, x);
+		}
+		
+		
+		prevCoordT = coordT;
+		coordT = mix(coord,cEND,t);
+
+		prevHeight = coordHeight;
+		coordHeight = coordT.z;
+
+		
+		prevBumpHeight = bumpHeight;
+		bumpHeight = texture(uTex_hm,coordT.xy).x;
+		
+		t += dt;
+	}
+	
 	// done
 	return coord;
 }
@@ -81,6 +142,8 @@ void main()
 	vec4 nrm_view = normalize(vTangentBasis_view[2]);
 	vec4 pos_view = vTangentBasis_view[3];
 	
+	
+
 	// view-space view vector
 	vec4 viewVec = normalize(kEyePos - pos_view);
 	
@@ -88,12 +151,14 @@ void main()
 	//	-> convert view vector into tangent space
 	//		(hint: the above TBN bases convert tangent to view, figure out 
 	//		an efficient way of representing the required matrix operation)
+
+	mat4 TBN = inverse(mat4(tan_view,bit_view,nrm_view, pos_view));
+
+	//mat4 TBNInv = inverse(TBN);
+
 	// tangent-space view vector
-	vec3 viewVec_tan = vec3(
-		0.0,
-		0.0,
-		0.0
-	);
+	vec3 viewVec_tan = (TBN * viewVec).xyz;
+
 	
 	// parallax occlusion mapping
 	vec3 texcoord = vec3(vTexcoord_atlas.xy, uSize);
