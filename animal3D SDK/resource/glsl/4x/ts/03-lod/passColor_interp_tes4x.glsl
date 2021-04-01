@@ -42,32 +42,6 @@ uniform mat4 uP;
 
 out vec4 vColor;
 
-mat4 MH = mat4(
-				2, -2, 1, 1,
-				-3, 3, -2, -1,
-				0, 0, 1, 0,
-				1, 0, 0, 0);
-
-float s = 0.5;
-
-mat4 CRBasis = mat4(
-				-s, 2-s, s-2, s,
-				2s, s-3, 3-float(2s), -s,
-				-s, 0, s, 0,
-				0, 1, 0, 0);
-
-mat4 MCR = mat4(
-				0, -1, 2, -1,
-				2, 0, -5, 3,
-				0, 1, 4, -3,
-				0, 0, -1, 1);
-
-mat4 M = mat4(
-				0, 2, 0, 0,
-				-1, 0, 1, 0,
-				1, -5, 4, -1,
-				-1, 3, -3, 1);
-
 void main()
 {
 	int i0 = gl_PrimitiveID;
@@ -82,10 +56,9 @@ void main()
 		*/
 	//Replace this linear interpolation with another algorithm to draw a curve
 	
+	//Catmull rom spline interpolation
 	
 	vec4 p;
-	//vec4 slope0 = uCurveTangent[i0] - uCurveWaypoint[i0];
-	//vec4 slope1 = uCurveTangent[i1] - uCurveWaypoint[i1];
 
 	vec4 point0= uCurveWaypoint[(i0-1)%uCount];
 	vec4 point1= uCurveWaypoint[i0];

@@ -82,7 +82,63 @@ void drawWireframe()
 	EndPrimitive();
 }
 
+void drawVertexTangent()
+{
+		for(int i = 0; i < 3; i++)
+		{
+			
+			vec4 tan_view = normalize(vVertexData[i].vTangentBasis_view[0]);
+			vec4 bit_view = normalize(vVertexData[i].vTangentBasis_view[1]);
+			vec4 nrm_view = normalize(vVertexData[i].vTangentBasis_view[2]);
+			vec4 pos_view = vVertexData[i].vTangentBasis_view[3];
+
+			mat4 TBN = inverse(mat4(tan_view,bit_view,nrm_view, pos_view));
+
+			vColor = vec4(1.0,0.0,0.0,1.0);
+			vec4 v0 = gl_in[i].gl_Position;
+			gl_Position = v0;
+			EmitVertex();
+			vec4 t = tan_view;
+			gl_Position = v0 + t;
+			EmitVertex();
+			
+			EndPrimitive();
+		
+			vColor = vec4(0.0,1.0,0.0,1.0);
+			gl_Position = v0;
+			EmitVertex();
+			vec4 b = bit_view;
+			gl_Position = v0 + b;
+			EmitVertex();
+			EndPrimitive();
+
+			vColor = vec4(0.0,0.0,1.0,1.0);
+			gl_Position = v0;
+			EmitVertex();
+			vec4 n = nrm_view;
+			gl_Position = v0 + n;
+			EmitVertex();
+			
+			EndPrimitive();
+		}
+	
+}
+
+void drawFaceTangent()
+{
+	vec4 v0 = gl_in[0].gl_Position;
+	vec4 v1 = gl_in[1].gl_Position;
+	vec4 v2 = gl_in[2].gl_Position;
+
+	vec4 delta1 = v1-v0;
+	vec4 delta2 = v2-v0;
+
+	vec4 normal = normalize(delta1*delta2);
+
+}
+
 void main()
 {
 	drawWireframe();
+	drawVertexTangent();
 }

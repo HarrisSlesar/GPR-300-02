@@ -46,6 +46,10 @@ in vbVertexData_tess {
 } vVertexData_tess[];
 void main()
 {
+
+	vTangentBasis_view = vVertexData_tess[gl_InvocationID].vTangentBasis_view;
+
+	vTexcoord_atlas = vVertexData_tess[gl_InvocationID]. vTexcoord_atlas;
 //gl_TessCoord -> barycentric
 	//gl_position = ???
 }
