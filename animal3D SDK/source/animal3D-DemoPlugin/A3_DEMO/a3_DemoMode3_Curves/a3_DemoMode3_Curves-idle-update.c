@@ -63,8 +63,6 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 		
 		a3ui32 indexStart = demoMode->curveSegmentIndex;
 		a3ui32 indexEnd = (indexStart + 1) % demoMode->curveWaypointCount;
-
-
 		demoMode->curveSegmentTime += (a3f32)dt;
 		if (demoMode->curveSegmentTime >= demoMode->curveSegmentDuration)
 		{
@@ -76,7 +74,6 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 
 		demoMode->curveSegmentParam = demoMode->curveSegmentTime * demoMode->curveSegmentDurationInv;
 
-		
 		a3real4CatmullRom(sceneObjectData->position.v, demoMode->curveWaypoint[(indexStart - 1) % demoMode->curveWaypointCount].v, demoMode->curveWaypoint[indexStart].v,
 			demoMode->curveWaypoint[indexEnd].v, demoMode->curveWaypoint[(indexEnd + 1) % demoMode->curveWaypointCount].v, demoMode->curveSegmentParam);
 

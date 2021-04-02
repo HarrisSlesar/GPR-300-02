@@ -38,18 +38,36 @@ layout (triangles, equal_spacing) in;
 out vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
-};
+}vVertexData;
 
 in vbVertexData_tess {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
 } vVertexData_tess[];
+
+uniform mat4 uP;
+
+uniform sampler2D uTex_hm;
+
 void main()
 {
+	//Loops through the input array, referencing the blue book to mix the data and apply it to the out
+	for(int i =0; i < 4; i++)
+	{
+		vVertexData.vTangentBasis_view[i] =gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[i] + gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[i] + gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[i];
+	}
+	vVertexData.vTexcoord_atlas = gl_TessCoord.x * vVertexData_tess[0].vTexcoord_atlas + gl_TessCoord.y * vVertexData_tess[1].vTexcoord_atlas + gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
 
-	vTangentBasis_view = vVertexData_tess[gl_InvocationID].vTangentBasis_view;
+	//gets the normal and the position
+	vec4 normal = vVertexData.vTangentBasis_view[2];
+	vec4 position = vVertexData.vTangentBasis_view[3];
 
-	vTexcoord_atlas = vVertexData_tess[gl_InvocationID]. vTexcoord_atlas;
-//gl_TessCoord -> barycentric
-	//gl_position = ???
+	//gets the height using the mixed texCoord atlas
+	float height = texture(uTex_hm, vVertexData.vTexcoord_atlas.xy).x;
+
+	//displaces position along normal with height
+	position += normalize(normal) * height;
+	
+	gl_Position = uP * position; //multiplies by projection
+
 }

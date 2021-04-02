@@ -1,6 +1,6 @@
 /*
 	Copyright 2011-2021 Daniel S. Buckstein
-
+	
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -63,42 +63,49 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	// ****DONE:
 	//	-> step along view vector until intersecting height map
 	//	-> determine precise intersection point, return resulting coordinate
-	vec3 cEND = vec3(coord.xy-(viewVec.xy/viewVec.z)*uSize,0);
+
+	vec3 cEND = vec3(coord.xy-(viewVec.xy/viewVec.z)*uSize,0); //calculating the end coord
 	float n = float(steps);
 	float dt = 1/n;
 	float t = 0.0f;
 	coord.z = 1;
 
-	vec3 coordT = mix(coord,cEND,t);
-	vec3 prevCoordT = coord;
+	vec3 coordT = mix(coord,cEND,t); //lerping to the starting step cord
+	vec3 prevCoordT = coord; //Setting the previous step coord as the fragment coord
 
-	float coordHeight = coordT.z;
+	float coordHeight = coordT.z; //setting heights
 	float prevHeight = prevCoordT.z;
 
 	float bumpHeight = texture(uTex_hm,coordT.xy).x;
 	float prevBumpHeight = texture(uTex_hm,prevCoordT.xy).x;
 
+	//While loop that steps along the view vector
 	while(t <= 1)
 	{
+		//checks to see if height 
 		if(bumpHeight > coordHeight)
 		{
-			float deltaH = coordHeight - prevHeight;
-			float deltaB = bumpHeight - prevBumpHeight;
+			float deltaH = coordHeight - prevHeight; //calculates change in height over one step
+			float deltaB = bumpHeight - prevBumpHeight; //calculates chage in bump height over step
 
-			float x = (prevHeight - prevBumpHeight) / (deltaB - deltaH);
+			float x = (prevHeight - prevBumpHeight) / (deltaB - deltaH); //Calculates x
 			//return coord-(cEND*bumpHeight);
-			return mix(prevCoordT, coordT, x);
+			return mix(prevCoordT, coordT, x); //returns the exact coord of the intersection
 		}
+		
+		//sets the previous and new step coords
 		prevCoordT = coordT;
 		coordT = mix(coord,cEND,t);
 
+		//sets the previous and new height
 		prevHeight = coordHeight;
 		coordHeight = coordT.z;
 
+		//sets the previous and new bump height
 		prevBumpHeight = bumpHeight;
 		bumpHeight = texture(uTex_hm,coordT.xy).x;
 		
-		t += dt;
+		t += dt; //updates t
 	}
 	// done
 	return coord;

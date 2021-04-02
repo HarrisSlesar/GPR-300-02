@@ -51,6 +51,8 @@ in vbVertexData {
 
 layout (line_strip, max_vertices = MAX_VERTICES) out;
 
+uniform mat4 uP;
+
 out vec4 vColor;
 
 void drawWireframe()
@@ -90,16 +92,14 @@ void drawVertexTangent()
 			vec4 tan_view = normalize(vVertexData[i].vTangentBasis_view[0]);
 			vec4 bit_view = normalize(vVertexData[i].vTangentBasis_view[1]);
 			vec4 nrm_view = normalize(vVertexData[i].vTangentBasis_view[2]);
-			vec4 pos_view = vVertexData[i].vTangentBasis_view[3];
 
-			mat4 TBN = inverse(mat4(tan_view,bit_view,nrm_view, pos_view));
 
 			vColor = vec4(1.0,0.0,0.0,1.0);
 			vec4 v0 = gl_in[i].gl_Position;
 			gl_Position = v0;
 			EmitVertex();
-			vec4 t = tan_view;
-			gl_Position = v0 + t;
+			vec4 t = uP * tan_view;
+			gl_Position = v0 + normalize(t);
 			EmitVertex();
 			
 			EndPrimitive();
@@ -107,16 +107,16 @@ void drawVertexTangent()
 			vColor = vec4(0.0,1.0,0.0,1.0);
 			gl_Position = v0;
 			EmitVertex();
-			vec4 b = bit_view;
-			gl_Position = v0 + b;
+			vec4 b =uP * bit_view;
+			gl_Position = v0 + normalize(b);
 			EmitVertex();
 			EndPrimitive();
 
 			vColor = vec4(0.0,0.0,1.0,1.0);
 			gl_Position = v0;
 			EmitVertex();
-			vec4 n = nrm_view;
-			gl_Position = v0 + n;
+			vec4 n =uP * nrm_view;
+			gl_Position = v0 + normalize(n);
 			EmitVertex();
 			
 			EndPrimitive();
