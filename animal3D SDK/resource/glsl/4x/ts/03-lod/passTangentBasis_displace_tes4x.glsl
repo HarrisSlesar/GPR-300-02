@@ -51,11 +51,10 @@ uniform sampler2D uTex_hm;
 
 void main()
 {
-	//Loops through the input array, referencing the blue book to mix the data and apply it to the out
-	for(int i =0; i < 4; i++)
-	{
-		vVertexData.vTangentBasis_view[i] =gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[i] + gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[i] + gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[i];
-	}
+	//referencing the blue book page 76 to mix the data and apply it to the out
+	
+	vVertexData.vTangentBasis_view =gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view + gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view + gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view;
+	
 	vVertexData.vTexcoord_atlas = gl_TessCoord.x * vVertexData_tess[0].vTexcoord_atlas + gl_TessCoord.y * vVertexData_tess[1].vTexcoord_atlas + gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
 
 	//gets the normal and the position
