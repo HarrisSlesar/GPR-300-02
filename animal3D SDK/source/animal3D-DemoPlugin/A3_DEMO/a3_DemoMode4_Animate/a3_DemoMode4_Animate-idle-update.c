@@ -76,21 +76,37 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			++j, ++p0, ++p1, ++pBase, ++localSpaceArray)
 		{
 			// testing: copy base pose
-			tmpPose = *pBase;
+			//tmpPose = *pBase;
 
-			// ****TO-DO:
+			// ****DONE:
 			// interpolate channels
 			a3real4Lerp(tmpPose.position.v, p0->position.v, p1->position.v, u);
 			a3real4Lerp(tmpPose.euler.v, p0->euler.v, p1->euler.v, u);
 			a3real3Lerp(tmpPose.scale.v, p0->scale.v, p1->scale.v, u);
+
+			a3clamp(0, 360, tmpPose.euler.x);
+			a3clamp(0, 360, tmpPose.euler.y);
+			a3clamp(0, 360, tmpPose.euler.z);
+
+			// ****DONE:
+			// concatenate base pose
+			a3real4Sum(tmpPose.euler.v, pBase->euler.v, tmpPose.euler.v);
+			a3real4Sum(tmpPose.position.v, pBase->position.v, tmpPose.position.v);
+			a3real3ProductComp(tmpPose.scale.v, pBase->scale.v, tmpPose.scale.v);
 			
 
-			// ****TO-DO:
-			// concatenate base pose
-
-			// ****TO-DO:
+			// ****DONE:
 			// convert to matrix
+			
+			
+			
+			a3mat4 scale_translation = { tmpPose.scale.x, 0, 0, 0,
+										0, tmpPose.scale.y, 0, 0,
+										0,0, tmpPose.scale.z,0,
+										tmpPose.position.x, tmpPose.position.y, tmpPose.position.z, 1 };
+			a3real4x4SetRotateXYZ(localSpaceArray->m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
 
+			a3real4x4Concat(scale_translation.m, localSpaceArray->m);
 		}
 
 		// done
@@ -104,10 +120,23 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 {
 	if (hierarchy && objectSpaceArray && localSpaceArray)
 	{
-		// ****TO-DO: 
+		// ****DONE: 
 		// forward kinematics
-		//a3ui32 j;
-		//a3i32 jp;
+		a3ui32 j;
+		a3i32 jp;
+
+		for (j = 0; j < hierarchy->numNodes; j++)
+		{
+			jp = hierarchy->nodes[j].parentIndex;
+			if (jp == -1)
+			{
+				objectSpaceArray[j] = localSpaceArray[j];
+			}
+			else
+			{
+				a3real4x4Product(objectSpaceArray[j].m, objectSpaceArray[jp].m, localSpaceArray[j].m);
+			}
+		}
 
 		// done
 		return 1;
