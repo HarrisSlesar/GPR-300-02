@@ -50,6 +50,19 @@ layout (location = 11) in vec3 aBitangent;
 // -> texcoord - shared because it's always the same in 2D
 // -> bitangent: normal x tangent
 
+struct sMorphTarget
+{
+	vec4 position;
+	vec3 normal;      float nPad;
+	vec3 tangent;     float tPad;
+
+};
+
+layout (location = 0) in sMorphTarget aMorphTarget[5];
+//texcoord
+
+
+
 struct sModelMatrixStack
 {
 	mat4 modelMat;						// model matrix (object -> world)
