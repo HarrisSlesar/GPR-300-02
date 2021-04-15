@@ -80,6 +80,10 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			// ****TO-DO:
 			// interpolate channels
+			a3real4Lerp(tmpPose.position.v, p0->position.v, p1->position.v, u);
+			a3real4Lerp(tmpPose.euler.v, p0->euler.v, p1->euler.v, u);
+			a3real3Lerp(tmpPose.scale.v, p0->scale.v, p1->scale.v, u);
+			
 
 			// ****TO-DO:
 			// concatenate base pose
