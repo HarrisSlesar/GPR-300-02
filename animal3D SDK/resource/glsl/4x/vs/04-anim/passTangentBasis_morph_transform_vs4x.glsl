@@ -53,24 +53,17 @@ layout (location = 11) in vec3 aBitangent;
 struct sMorphTarget
 {
 	vec4 position;
-	vec3 normal;      float nPad;
-	vec3 tangent;     float tPad;
+	vec3 normal;     
+	vec3 tangent;    
 
 };
 
 layout (location = 0) in sMorphTarget aMorphTarget[5];
 //texcoord
-layout (location = 8) in vec4 aTexcoord;
+layout (location = 15) in vec4 aTexcoord; //found in DemoState-load
 
 
-struct sAnimMorphTeapot
-{
-	float duration, durationInv;
-	float time, param;
-	int index, count;
-};
-
-uniform sAnimMorphTeapot uAnimMorphTeapot[1];
+uniform float uTime;
 
 
 struct sModelMatrixStack
@@ -99,7 +92,7 @@ out vbVertexData {
 flat out int vVertexID;
 flat out int vInstanceID;
 
-
+//Linear interpolation function
 vec4 interp(vec4 left, vec4 right, float param)
 {
 	return mix(left,right,param);
@@ -111,28 +104,32 @@ void main()
 	// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
 	
+	int index = int(uTime); //Calculating index from uniform
+	float param = uTime - float(index); //calculating parameter from uniform
 	
-	int i0 = uAnimMorphTeapot[0].index;
-	int i1 = (i0+1)%uAnimMorphTeapot[0].count;
+	int i0 = index; //making the index to interpolate from and to
+	int i1 = (i0+1)%5;
 	
+	vec3 bitangent = cross(aMorphTarget[i0].normal, aMorphTarget[i0].tangent); //Calculating the bitangents for the current and following target
+	vec3 bitangentEnd = cross(aMorphTarget[i1].normal, aMorphTarget[i1].tangent);
+
 	//results of morphing
-	vec4 aPosition = interp(aMorphTarget[i0].position, aMorphTarget[i1].position, uAnimMorphTeapot[0].param);
-	vec3 aTangent = interp(vec4(aMorphTarget[i0].tangent,aMorphTarget[i0].tPad), vec4(aMorphTarget[i1].tangent,aMorphTarget[i1].tPad), uAnimMorphTeapot[0].param).xyz;
-	
-	vec3 aNormal = interp(vec4(aMorphTarget[i0].normal,aMorphTarget[i0].nPad), vec4(aMorphTarget[i1].normal,aMorphTarget[i1].nPad), uAnimMorphTeapot[0].param).xyz;
-	vec3 aBitangent = aNormal * aTangent;
+	vec4 aPosition = interp(aMorphTarget[i0].position, aMorphTarget[i1].position, param); //Interpolating position
+	vec3 aTangent = interp(vec4(aMorphTarget[i0].tangent,0), vec4(aMorphTarget[i1].tangent,0),param).xyz; //interpolating tangent
+	vec3 aNormal = interp(vec4(aMorphTarget[i0].normal,0), vec4(aMorphTarget[i1].normal,0), param).xyz; //interpolating normal
+	vec3 aBitangent = interp(vec4(bitangent,0), vec4(bitangentEnd,0),param).xyz; //interpolating bitangent
 	
 
 
 	//testing: copy the first morph target only
 
 	/*
-	vec4 aPosition = aMorphTarget[0].position;
-	vec3 aTangent = aMorphTarget[0].tangent;
-	vec3 aNormal = aMorphTarget[0].normal;
+	vec4 aPosition = aMorphTarget[i0].position;
+	vec3 aTangent = aMorphTarget[i0].tangent;
+	vec3 aNormal = aMorphTarget[i0].normal;
 	vec3 aBitangent = cross(aNormal,aTangent);
+	
 	*/
-
 	
 	sModelMatrixStack t = uModelMatrixStack[uIndex];
 	

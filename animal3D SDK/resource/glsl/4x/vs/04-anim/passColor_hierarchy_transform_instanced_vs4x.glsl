@@ -36,7 +36,7 @@ layout (location = 0) in vec4 aPosition;
 
 uniform ubTransformMVP {
 	mat4 uMVP[MAX_INSTANCES];
-	int uHierarchyDepth_skel[MAX_INSTANCES];
+	int uHierarchyDepth_skel[MAX_INSTANCES]; //getting the depth uniform
 };
 
 uniform vec4 uColor0[MAX_COLORS];
@@ -52,7 +52,7 @@ void main()
 //	gl_Position = aPosition;
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
 	
-	vColor = uColor0[uHierarchyDepth_skel[gl_InstanceID]];
+	vColor = uColor0[uHierarchyDepth_skel[gl_InstanceID]]; //Setting the color of the bone to match the depth at the current index
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

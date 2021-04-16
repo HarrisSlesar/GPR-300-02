@@ -84,6 +84,7 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			a3real4Lerp(tmpPose.euler.v, p0->euler.v, p1->euler.v, u);
 			a3real3Lerp(tmpPose.scale.v, p0->scale.v, p1->scale.v, u);
 
+			//clamping the euler angles
 			a3clamp(0, 360, tmpPose.euler.x);
 			a3clamp(0, 360, tmpPose.euler.y);
 			a3clamp(0, 360, tmpPose.euler.z);
@@ -97,9 +98,6 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			// ****DONE:
 			// convert to matrix
-			
-			
-			
 			a3mat4 scale_translation = { tmpPose.scale.x, 0, 0, 0,
 										0, tmpPose.scale.y, 0, 0,
 										0,0, tmpPose.scale.z,0,
@@ -122,6 +120,7 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 	{
 		// ****DONE: 
 		// forward kinematics
+		//Code followed from lecture 9 slides
 		a3ui32 j;
 		a3i32 jp;
 
