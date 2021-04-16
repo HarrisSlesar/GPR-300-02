@@ -26,7 +26,7 @@
 
 #define MAX_OBJECTS 128
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare morph target attributes
 //	-> declare and implement morph target interpolation algorithm
 //	-> declare interpolation time/param/keyframe uniform
